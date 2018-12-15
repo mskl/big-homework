@@ -1,0 +1,2 @@
+- pipeline.id: blackfriday-pipeline
+  path.config: /usr/share/logstash/pipeline

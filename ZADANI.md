@@ -12,7 +12,7 @@
     - využít třídění
     - použít wildcard hledání (www.-soft-.com)
 - k indexu připojit vizualizační nástroj (např. Kibanu) a udělat dashboard s 4 smysluplnými pohledy na vaše data
-- po dohodě (dopředu schváleno) je možné použít i jiné technologie než je Spark a ElasticSearch
+
 
 ## Forma
 - k semestrální práci je potřeba zpracovat kompletní dokumentaci (odevzdat ve formátu PDF), která bude obsahovat minimálně:
