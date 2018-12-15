@@ -1,0 +1,18 @@
+[
+  {
+    "_id": "e4490020-0094-11e9-9f79-6737038ee52e",
+    "_type": "dashboard",
+    "_source": {
+      "title": "BlackFridayDashboard",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"panelIndex\":\"1\",\"gridData\":{\"x\":6,\"y\":2,\"w\":6,\"h\":2,\"i\":\"1\"},\"title\":\"Rozdělení zákazníků podle věku a pohlaví\",\"id\":\"616285b0-0093-11e9-9f79-6737038ee52e\",\"type\":\"visualization\",\"version\":\"6.2.4\"},{\"title\":\"Zákazníci s nejvyšším počtem zakoupených produktů.\",\"panelIndex\":\"2\",\"gridData\":{\"x\":0,\"y\":4,\"w\":6,\"h\":3,\"i\":\"2\"},\"id\":\"5ec52910-0094-11e9-9f79-6737038ee52e\",\"type\":\"visualization\",\"version\":\"6.2.4\"},{\"panelIndex\":\"3\",\"gridData\":{\"x\":0,\"y\":0,\"w\":6,\"h\":2,\"i\":\"3\"},\"id\":\"9f54ded0-0094-11e9-9f79-6737038ee52e\",\"title\":\"Velikost datasetu\",\"type\":\"visualization\",\"version\":\"6.2.4\"},{\"panelIndex\":\"4\",\"gridData\":{\"x\":0,\"y\":2,\"w\":6,\"h\":2,\"i\":\"4\"},\"id\":\"10393d50-0093-11e9-9f79-6737038ee52e\",\"title\":\"Rozdělení zákazníků podle pohlaví\",\"type\":\"visualization\",\"version\":\"6.2.4\"},{\"title\":\"Rozdělení zákazníků dle města a povolání.\",\"panelIndex\":\"5\",\"gridData\":{\"x\":6,\"y\":4,\"w\":6,\"h\":3,\"i\":\"5\"},\"id\":\"f3b022b0-0093-11e9-9f79-6737038ee52e\",\"type\":\"visualization\",\"version\":\"6.2.4\"},{\"panelIndex\":\"6\",\"gridData\":{\"x\":6,\"y\":0,\"w\":6,\"h\":2,\"i\":\"6\"},\"id\":\"94e985d0-0095-11e9-9f79-6737038ee52e\",\"title\":\"Počet unikátních zákazníků\",\"type\":\"visualization\",\"version\":\"6.2.4\"}]",
+      "optionsJSON": "{\"darkTheme\":false,\"hidePanelTitles\":false,\"useMargins\":true}",
+      "version": 1,
+      "timeRestore": false,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"query\":{\"language\":\"lucene\",\"query\":\"\"},\"filter\":[],\"highlightAll\":true,\"version\":true}"
+      }
+    }
+  }
+]

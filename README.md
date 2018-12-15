@@ -1,47 +1,96 @@
 # Domácí úkol na BI-BIG
-Vypracoval Matyáš Skalický
+Vypracoval Matyáš Skalický 15.12.2018
+
+# Úvod
+Cílem tohoto úkolu je zopakovat si postupy probrané na cvičení na vlastních datech.
 
 # Dataset
-Dataset byl pro účel zadání upraven a rozdělen na 3 datasety za pomocí frameworku Pandas. JupyterNotebook obsahující tuto transformaci je popsán v souboru [DatasetTransform.ipynb](DatasetTransform.ipynb).
+Dataset obsahuje 550 000 záznamů z Black Friday z amerického obchodního řetězce. Obsahuje jak numerické, tak kategorické proměnné. Obsahuje chybějící hodnoty. Bylo dogenerován sloupec Refferal a upraveno Product_ID na numerickou hodnotu (odstraněním předpony P a úvodních nul). Úpravy datasetu jsou popsány v souboru  [DatasetTransform.ipynb](DatasetTransform.ipynb). Dataset byl pro potřeby úkolu rozdělen na 3 části.
 
 ### Zdroj datasetu:
 [https://www.kaggle.com/mehdidag/black-friday](https://www.kaggle.com/mehdidag/black-friday)
 
-### Popis datasetu
-Vzhledem k faktu, že pro agregace používám jeden a ten samý dataset rozdělený na 3 části, popíšu nejprve všechny sloupce datasetu a následně jejich rozdělení do nových menších datasetů.
+#### Dataset users.csv
+|   User_ID | Gender   | Age   |   Occupation | City_Category   | Stay_In_Current_City_Years   |   Marital_Status | Refferal            |
+|----------:|:---------|:------|-------------:|:----------------|:-----------------------------|-----------------:|:--------------------|
+|   1000001 | F        | 0-17  |           10 | A               | 2                            |                0 | www.baidu.com       |
+|   1000001 | F        | 0-17  |           10 | A               | 2                            |                0 | www.samsung.com     |
+|   1000001 | F        | 0-17  |           10 | A               | 2                            |                0 | www.google.com.ar   |
+|   1000001 | F        | 0-17  |           10 | A               | 2                            |                0 | www.google.ca       |
+|   1000002 | M        | 55+   |           16 | C               | 4+                           |                0 | www.accuweather.com |
 
-Dataset obsahuje 550 000 záznamů z Black Friday z amerického obchodního domu. Obsahuje jak numerické, tak kategorické proměnné. Obsahuje chybějící hodnoty. Bylo dogenerován sloupec Refferal a upraveno Product_ID na numerickou hodnotu (odstraněním předpony P a úvodních nul).
+```
+RangeIndex: 537577 entries, 0 to 537576
+Data columns (total 8 columns):
+User_ID                       537577 int64 
+    - Unikátní identifikátor uživatele.
+Gender                        537577 object 
+    - Pohlaví zákazníka (M/F).
+Age                           537577 object 
+    - Věková skupina zákazníka.
+Occupation                    537577 int64 
+    - Kategorie dle typu zaměstnání (maskovaná, číslo).
+City_Category                 537577 object 
+    - Kategorie města (maskovaná - hodnoty A, B, C).
+Stay_In_Current_City_Years    537577 object 
+    - Délka pobytu v současném městě v letech.
+Marital_Status                537577 int64 
+    - Manželský status (1=ženatý, 0=jinak).
+Refferal                      537577 object 
+    - Stránka, odkud uživatel přišel, když se registroval (náhodně generováno).
+memory usage: 32.8+ MB
+```
 
-### Sloupce
-Popis sloupců původního datasetu:
+#### Dataset products.csv
+|   User_ID |   Product_ID |   Product_Category_1 |   Product_Category_2 |   Product_Category_3 |
+|----------:|-------------:|---------------------:|---------------------:|---------------------:|
+|     1e+06 |        69042 |                    3 |                  nan |                  nan |
+|     1e+06 |       248942 |                    1 |                    6 |                   14 |
+|     1e+06 |        87842 |                   12 |                  nan |                  nan |
+|     1e+06 |        85442 |                   12 |                   14 |                  nan |
+|     1e+06 |       285442 |                    8 |                  nan |                  nan |
 
-- **User_ID - 537577 non-null int64** - Unikátní identifikátor uživatele.
-- **Product_ID - 537577 non-null int64** - Unikátní identifikátor produktu.
-- **Gender - 537577 non-null object** - Pohlaví zákazníka (M/F).
-- **Age - 537577 non-null object** - Věková skupina zákazníka.
-- **Occupation - 537577 non-null int64** - Kategorie dle typu zaměstnání (maskovaná, číslo).
-- **City_Category - 537577 non-null object** - Kategorie města (maskovaná - hodnoty A, B, C).
-- **Stay_In_Current_City_Years - 537577 non-null object** - Délka pobytu v současném městě v letech.
-- **Marital_Status - 537577 non-null int64** - Manželský status (1=ženatý, 0=jinak).
-- **Product_Category_1 - 537577 non-null int64** - Primární kategorie produktu. (maskovaná, číslo)
-- **Product_Category_2 - 370591 non-null float64** - Sekundární kategorie produktu. (maskovaná, číslo)
-- **Product_Category_3 - 164278 non-null float64** - Tercérní kategorie produktu. (maskovaná, číslo)
-- **Purchase - 537577 non-null int64** - Částka, kterou uživatel utratil v USD za celou dobu.
-- **Refferal - 537577 non-null object** - Stránka, odkud uživatel přišel, když se registroval (náhodně generováno).
+```
+RangeIndex: 537577 entries, 0 to 537576
+Data columns (total 5 columns):
+User_ID               537577 int64 
+    - Unikátní identifikátor uživatele.
+Product_ID            537577 int64 
+    - Unikátní identifikátor produktu.
+Product_Category_1    537577 float64 
+    - Primární kategorie produktu. (maskovaná, číslo)
+Product_Category_2    370591 float64 
+    - Sekundární kategorie produktu. (maskovaná, číslo)
+Product_Category_3    164278 float64 
+    - Tercérní kategorie produktu. (maskovaná, číslo)
+memory usage: 20.5 MB
+```
 
-### Ukázka datasetu (10 řádků)
-TODO
+#### Dataset user_purchase.csv
+|   User_ID |   Purchase |
+|----------:|-----------:|
+|     1e+06 |       8370 |
+|     1e+06 |      15200 |
+|     1e+06 |       1422 |
+|     1e+06 |       1057 |
+|     1e+06 |       7969 |
 
-### Rozdělení datasetu na 3 nové datasety.
-TODO
+```
+RangeIndex: 537577 entries, 0 to 537576
+Data columns (total 2 columns):
+User_ID     537577 non-null int64
+    - Unikátní identifikátor uživatele.
+Purchase    537577 non-null int64
+    - Předpokládám že kumulativní suma částky utracené uživatelem v obchodě. Dataset neobsahuje informace o měně. Domnívám se, že částky jsou v centech (tedy v dolarech * 100) jelikož se jedná o velmi vysoké částky.
+memory usage: 8.2 MB
+```
 
-***
-# Spouštění databázového clusteru
+# Spuštění databázového clusteru
 Následující postup vychází z [návodu prezentovaného na 5. cvičení](https://courses.fit.cvut.cz/BI-BIG/tutorials/05/index.html). Postup vyžaduje nainstalovaný a plně funkční [docker-compose](https://docs.docker.com/compose/). 
 
 ## Spark
 ### Build image pro spark
-Bude vytvořen image *spark* který bude využit dle parametrů při spuštění jak pro worker, tak pro master node.
+Otevřeme termínál ve složece spark. Bude vytvořen image *spark* který bude využit dle parametrů při spuštění jak pro worker, tak pro master node.
 
 ```bash
 docker build -f spark.df -t spark .
@@ -76,9 +125,8 @@ Pro zjednodušení práce si přidáme do cesty image odkaz na hadoop.
 export PATH=$PATH:/usr/local/hadoop/bin/
 ```
 
-***
 # Import dat do databázového clusteru
-Vytvoříme složku *data* v rootu image.
+Vytvoříme složku *data* v rootu image a v rootu HDFS filesystému.
 ```bash
 mkdir /data
 hdfs dfs -mkdir /data
@@ -86,44 +134,78 @@ hdfs dfs -mkdir /data
 
 Kopie dat do kontejneru na kterém běží HFDS.
 ```bash
-docker cp data/BlackFriday.csv 62c4cd83e124:/data/BlackFriday.csv
+docker cp data/products.csv hadoop:/data/products.csv
+docker cp data/user_purchase.csv hadoop:/data/user_purchase.csv
+docker cp data/users.csv hadoop:/data/users.csv
 ```
 
 Vložení dat z filesystému image do HDFS.
 ```bash
-hdfs dfs -put /data/BlackFriday.csv /data/BlackFriday.csv
+hdfs dfs -put /data/products.csv /data/products.csv
+hdfs dfs -put /data/user_purchase.csv /data/user_purchase.csv
+hdfs dfs -put /data/users.csv /data/users.csv
 ```
 
 Načtení csv souboru z HDFS do sparku
 ```scala
-val blackFriday = spark.sqlContext.read.format("csv").option("header", "true").option("inferSchema", "true").load("hdfs://172.17.0.5:9000/data/BlackFriday.csv")
+val users = spark.sqlContext.read.format("csv").option("header", "true").option("inferSchema", "true").load("hdfs://172.17.0.5:9000/data/users.csv")
+val user_purchase = spark.sqlContext.read.format("csv").option("header", "true").option("inferSchema", "true").load("hdfs://172.17.0.5:9000/data/user_purchase.csv")
+val products = spark.sqlContext.read.format("csv").option("header", "true").option("inferSchema", "true").load("hdfs://172.17.0.5:9000/data/products.csv")
 ```
 
 # Agregace
 ### 1. vytvořit nový dataset, který bude agregovat data z jednoho původního datasetu
+Zjistíme, kolik maximálně uživatel utratil. Vzhledem k tomu, že přepokládám, že se jedná o kumulativní sumu tedy i kolik celkem v obchodě utratil.
+```scala
+// Zjistíme maximální hodnoty sloupce Purchase
+val user_purchase_max = user_purchase.groupBy("User_ID").max("Purchase")
+// Zobrazíme výsledek
+user_purchase_max.show()
+```
 
 ### 2. vytvořit nový dataset, který bude agregovat data ze dvou původních datasetů najednou
+Zjistíme, kteří zákazníci si koupili nejméně produktů
+```scala
+users.registerTempTable("users")
+products.registerTempTable("products")
+
+// SQL dotaz
+val users_order_count = spark.sqlContext.sql("SELECT User_ID, first_value(Gender) as Gender, first_value(Age) as Age, first_value(Occupation) as Occupation, first_value(City_Category) as City_Category, first_value(Stay_In_Current_City_Years) as Stay_In_Current_City_Years, first_value(Marital_Status) as Marital_Status, first_value(Refferal) as Refferal, COUNT(Product_ID) as Product_Count FROM users u FULL JOIN products p USING(User_ID) GROUP BY User_ID ORDER BY Product_Count ASC")
+
+// Zobrazíme si výsledek. Volání provede dotaz.
+users_order_count.show()
+```
+
 
 ### 3. vytvořit nový dataset, který bude agregovat data ze dvou datasetů najednou, z čehož jeden bude výsledkem předchozí agregace a uložit ho zpět do databáze/na file systém
+```scala
+// Registrace dataframu na SQL tabulku
+user_purchase_max.withColumnRenamed("max(Purchase)", "Purchase").registerTempTable("user_purchase_max").
+users_order_count.registerTempTable("users_order_count")
+
+// Dotaz
+val user_average_purchase_amount = spark.sqlContext.sql("SELECT User_ID, Purchase / Product_Count as average_purchase FROM users_order_count u JOIN user_purchase_max USING (User_ID) ORDER BY average_purchase DESC")
+
+// Zobrazíme výsledek
+user_average_purchase_amount.show()
+```
 
 # Export dat ze spark clusteru
-Na HDFS se vytvoří složka /data/BlackFridayResult s výsledným csv.
-```bash
-blackFriday.coalesce(1).write.format("com.databricks.spark.csv").option("header","true").save("hdfs://172.17.0.5:9000/data/BlackFridayResult")
+Na HDFS se vytvoří složka /data/users_order_count s výsledným csv.
+```scala
+users_order_count.coalesce(1).write.format("com.databricks.spark.csv").option("header","true").save("hdfs://172.17.0.5:9000/data/users_order_count")
 ```
 
 Kopie dat z HDFS do filesystému kontejneru na kterém běží HDFS.
 ```bash
-hdfs dfs -get /data/BlackFridayResult /data/BlackFridayResult
+hdfs dfs -get /data/users_order_count /data/users_order_count
 ```
 
-Kopie dat z filesystému kontejneru.
+Kopie dat z filesystému kontejneru do filesystému počítače.
 ```bash
-docker cp 62c4cd83e124:/data/BlackFridayResult .
+docker cp hadoop:/data/users_order_count .
 ```
 
-***
-***
 # Vyhladávací index
 ## Nahrání dat a tvorba indexu
 Použijeme kontejner s technologií ElasticSearch pro indexaci csv souboru. Zároveň spustíme i kontejner Kibana, jterý slouží pro vizualizaci a dotazování nad daty. Data do ElasticSearch dostaneme za pomocí docker kontejneru LogStash. [Postup vychází ze cvičení číslo 9](https://courses.fit.cvut.cz/BI-BIG/tutorials/09/index.html).
@@ -216,4 +298,8 @@ Kibana:
 ``` Refferal:www.google.* ```
 
 ## Dashboard
-TODO
+Dashboard je uložen ve formátu JSON ve složce ./logstash/. Náhled vytvořeného dashboardu:
+![dashboard](dashboard.png)
+
+# Závěr
+Vyzkoušel jsem si vytvořit vlastní Spark cluster s Hadoop HDFS úložištěm a následně ve spark-console udělat pár jednoduchých transformací. Dataset jsem taktéž importoval přes LogStash do ElasticSearch, vytvořil pár vyhledávacích dotazů a v Kibaně následně připravil dashboard s vizualizacemi. Vypracování úkolu mě moc nebavilo, protože jsem prováděl velmi podobné postupy jako na cvičení a v UseCasech. I tak mi tato semestrální práce zabrala větší množství času, než by mi připadalo užitečné. Mám pocit, že celá práce byla spíš než o big data o psaní dokumentace a o vymýšlení SQL dotazů.

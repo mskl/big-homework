@@ -1,5 +1,1 @@
-docker kill f616945a5e28
-951a50b0af67
-c6c7c83af705 && docker rm f616945a5e28
-951a50b0af67
-c6c7c83af705 && docker-compose up -d && docker logs -f logstash
+docker kill $(docker ps -q) && docker rm $(docker ps -a -q) && docker-compose up -d && docker logs -f logstash
