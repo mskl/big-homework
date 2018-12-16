@@ -246,7 +246,7 @@ Jdeme do složky logstash. Kontejnery spustíme na pozadí s použitím příkaz
 docker-compose up -d
 ```
 
-Data se načtou dle definice konfigurace v souboru *logstash.conf*:
+Data se načtou dle definice konfigurace v souboru *logstash/logstash.conf*:
 ```json
 input {
 	file {
