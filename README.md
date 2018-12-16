@@ -1,11 +1,41 @@
 # Domácí úkol na BI-BIG
 Vypracoval Matyáš Skalický 15.12.2018
 
+# Rejstřík
+- [Úvod](#Úvod)
+- [Dataset](#dataset)
+    + [Zdroj datasetu:](#zdroj-datasetu:)
+      - [Dataset users.csv](#dataset-users.csv)
+      - [Dataset products.csv](#dataset-products.csv)
+      - [Dataset user_purchase.csv](#dataset-user-purchase.csv)
+- [Spuštění databázového clusteru](#spuštění-databázového-clusteru)
+  * [Spark](#spark)
+    + [Build image pro spark](#build-image-pro-spark)
+    + [Spuštění master a worker node](#spuštění-master-a-worker-node)
+    + [spark-shell](#spark-shell)
+      - [spuštění spark-shell](#spuštění-spark-shell)
+    + [Připojení spark-shell na master](#připojení-spark-shell-na-master)
+  * [HDFS kontejner](#hdfs-kontejner)
+- [Import dat do databázového clusteru](#import-dat-do-databázového-clusteru)
+- [Agregace](#agregace)
+    + [dataset, který bude agregovat data z jednoho původního datasetu](#dataset,-který-bude-agregovat-data-z-jednoho-původního-datasetu)
+    + [dataset, který bude agregovat data ze dvou původních datasetů najednou](#dataset,-který-bude-agregovat-data-ze-dvou-původních-datasetů-najednou)
+    + [dataset, který bude agregovat data ze dvou datasetů najednou, z čehož jeden bude výsledkem předchozí agregace a uložit ho zpět do databáze/na file systém](#dataset,-který-bude-agregovat-data-ze-dvou-datasetů-najednou,-z-čehož-jeden-bude-výsledkem-předchozí-agregace-a-uložit-ho-zpět-do-databáze/na-file-systém)
+- [Export dat ze spark clusteru](#export-dat-ze-spark-clusteru)
+- [Vyhladávací index](#vyhladávací-index)
+  * [Nahrání dat a tvorba indexu](#nahrání-dat-a-tvorba-indexu)
+  * [Dotazy na index](#dotazy-na-index)
+    + [Filtrování - vyhledání všech mužů:](#filtrování---vyhledání-všech-mužů:)
+    + [Třídění - seřadit zákazníky podle útraty](#Třídění---seřadit-zákazníky-podle-útraty)
+    + [Wildcard hledání - všichni zákazníci co přišli z Google](#Wildcard-hledání---všichni-zákazníci-co-přišli-z-Google)
+  * [Dashboard](#dashboard)
+- [Závěr](#závěr)
+
 # Úvod
 Cílem tohoto úkolu je zopakovat si postupy probrané na cvičení na vlastních datech.
 
 # Dataset
-Dataset obsahuje 550 000 záznamů z Black Friday z amerického obchodního řetězce. Obsahuje jak numerické, tak kategorické proměnné. Obsahuje chybějící hodnoty. Bylo dogenerován sloupec Refferal a upraveno Product_ID na numerickou hodnotu (odstraněním předpony P a úvodních nul). Úpravy datasetu jsou popsány v souboru  [DatasetTransform.ipynb](DatasetTransform.ipynb). Dataset byl pro potřeby úkolu rozdělen na 3 části.
+Dataset obsahuje 550 000 záznamů z Black Friday z amerického obchodního řetězce. Obsahuje jak numerické, tak kategorické proměnné. Obsahuje chybějící hodnoty. Bylo dogenerován sloupec Refferal a upraveno Product_ID na numerickou hodnotu (odstraněním předpony P a úvodních nul). Úpravy datasetu jsou popsány v souboru  [DatasetTransform.ipynb](DatasetTransform.ipynb) který se nachází v příloze. Dataset byl pro potřeby úkolu rozdělen na 3 části.
 
 ### Zdroj datasetu:
 [https://www.kaggle.com/mehdidag/black-friday](https://www.kaggle.com/mehdidag/black-friday)
@@ -90,7 +120,7 @@ Následující postup vychází z [návodu prezentovaného na 5. cvičení](http
 
 ## Spark
 ### Build image pro spark
-Otevřeme termínál ve složece spark. Bude vytvořen image *spark* který bude využit dle parametrů při spuštění jak pro worker, tak pro master node.
+Otevřeme terminál ve složce spark. Bude vytvořen image *spark* který bude využit dle parametrů při spuštění jak pro worker, tak pro master node.
 
 ```bash
 docker build -f spark.df -t spark .
@@ -126,7 +156,7 @@ export PATH=$PATH:/usr/local/hadoop/bin/
 ```
 
 # Import dat do databázového clusteru
-Vytvoříme složku *data* v rootu image a v rootu HDFS filesystému.
+Vytvoříme složku *data* v rootu hadoop image a v rootu HDFS filesystému.
 ```bash
 mkdir /data
 hdfs dfs -mkdir /data
@@ -154,7 +184,7 @@ val products = spark.sqlContext.read.format("csv").option("header", "true").opti
 ```
 
 # Agregace
-### 1. vytvořit nový dataset, který bude agregovat data z jednoho původního datasetu
+### dataset, který bude agregovat data z jednoho původního datasetu
 Zjistíme, kolik maximálně uživatel utratil. Vzhledem k tomu, že přepokládám, že se jedná o kumulativní sumu tedy i kolik celkem v obchodě utratil.
 ```scala
 // Zjistíme maximální hodnoty sloupce Purchase
@@ -163,9 +193,10 @@ val user_purchase_max = user_purchase.groupBy("User_ID").max("Purchase")
 user_purchase_max.show()
 ```
 
-### 2. vytvořit nový dataset, který bude agregovat data ze dvou původních datasetů najednou
+### dataset, který bude agregovat data ze dvou původních datasetů najednou
 Zjistíme, kteří zákazníci si koupili nejméně produktů
 ```scala
+// Registrace Dataframe jako SQL tabulek
 users.registerTempTable("users")
 products.registerTempTable("products")
 
@@ -177,7 +208,7 @@ users_order_count.show()
 ```
 
 
-### 3. vytvořit nový dataset, který bude agregovat data ze dvou datasetů najednou, z čehož jeden bude výsledkem předchozí agregace a uložit ho zpět do databáze/na file systém
+### dataset, který bude agregovat data ze dvou datasetů najednou, z čehož jeden bude výsledkem předchozí agregace a uložit ho zpět do databáze/na filesystém
 ```scala
 // Registrace dataframu na SQL tabulku
 user_purchase_max.withColumnRenamed("max(Purchase)", "Purchase").registerTempTable("user_purchase_max").
@@ -208,7 +239,7 @@ docker cp hadoop:/data/users_order_count .
 
 # Vyhladávací index
 ## Nahrání dat a tvorba indexu
-Použijeme kontejner s technologií ElasticSearch pro indexaci csv souboru. Zároveň spustíme i kontejner Kibana, jterý slouží pro vizualizaci a dotazování nad daty. Data do ElasticSearch dostaneme za pomocí docker kontejneru LogStash. [Postup vychází ze cvičení číslo 9](https://courses.fit.cvut.cz/BI-BIG/tutorials/09/index.html).
+Použijeme kontejner s technologií ElasticSearch pro indexaci csv souboru. Zároveň spustíme i kontejner Kibana, který slouží pro vizualizaci a dotazování nad daty. Data do ElasticSearch dostaneme za pomocí docker kontejneru LogStash. [Postup vychází ze cvičení číslo 9](https://courses.fit.cvut.cz/BI-BIG/tutorials/09/index.html).
 
 Jdeme do složky logstash. Kontejnery spustíme na pozadí s použitím příkazu:
 ```bash
@@ -254,7 +285,7 @@ Dotazy v Kibaně lze provádět v záložce *Discover*. Konzole se nachází na 
 
 ### Filtrování - vyhledání všech mužů:
 Dev Tools:
- ```json
+```json
 GET /blackfriday/doc/_search
 {
     "query": {
@@ -298,8 +329,8 @@ Kibana:
 ``` Refferal:www.google.* ```
 
 ## Dashboard
-Dashboard je uložen ve formátu JSON ve složce ./logstash/. Náhled vytvořeného dashboardu:
+Dashboard je uložen ve formátu JSON v souboru dashboard_blackfriday.json ve složce logstash. Náhled vytvořeného dashboardu:
 ![dashboard](dashboard.png)
 
 # Závěr
-Vyzkoušel jsem si vytvořit vlastní Spark cluster s Hadoop HDFS úložištěm a následně ve spark-console udělat pár jednoduchých transformací. Dataset jsem taktéž importoval přes LogStash do ElasticSearch, vytvořil pár vyhledávacích dotazů a v Kibaně následně připravil dashboard s vizualizacemi. Vypracování úkolu mě moc nebavilo, protože jsem prováděl velmi podobné postupy jako na cvičení a v UseCasech. I tak mi tato semestrální práce zabrala větší množství času, než by mi připadalo užitečné. Mám pocit, že celá práce byla spíš než o big data o psaní dokumentace a o vymýšlení SQL dotazů.
+Vyzkoušel jsem si vytvořit vlastní Spark cluster s Hadoop HDFS úložištěm a následně ve spark-console udělat pár jednoduchých transformací. Dataset jsem taktéž importoval přes LogStash do ElasticSearch, vytvořil pár vyhledávacích dotazů a v Kibaně následně připravil dashboard s vizualizacemi. Vypracování úkolu mě moc nebavilo, protože jsem prováděl velmi podobné postupy jako na cvičení a v UseCasech. I tak mi tato semestrální práce zabrala větší množství času, než by mi připadalo užitečné. Mám pocit, že celá práce byla spíš než o big data o psaní dokumentace a o vymýšlení SQL dotazů. Radši bych svůj čas strávil děláním něčeho smysluplnějšího.
