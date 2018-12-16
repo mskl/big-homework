@@ -4,7 +4,7 @@ Vypracoval Matyáš Skalický 15.12.2018
 # Rejstřík
 - [Úvod](#Úvod)
 - [Dataset](#dataset)
-    + [Zdroj datasetu:](#zdroj-datasetu:)
+    + [Zdroj datasetu](#zdroj-datasetu)
       - [Dataset users.csv](#dataset-users.csv)
       - [Dataset products.csv](#dataset-products.csv)
       - [Dataset user_purchase.csv](#dataset-user-purchase.csv)
@@ -25,7 +25,7 @@ Vypracoval Matyáš Skalický 15.12.2018
 - [Vyhladávací index](#vyhladávací-index)
   * [Nahrání dat a tvorba indexu](#nahrání-dat-a-tvorba-indexu)
   * [Dotazy na index](#dotazy-na-index)
-    + [Filtrování - vyhledání všech mužů:](#filtrování---vyhledání-všech-mužů:)
+    + [Filtrování - vyhledání všech mužů](#filtrování---vyhledání-všech-mužů)
     + [Třídění - seřadit zákazníky podle útraty](#Třídění---seřadit-zákazníky-podle-útraty)
     + [Wildcard hledání - všichni zákazníci co přišli z Google](#Wildcard-hledání---všichni-zákazníci-co-přišli-z-Google)
   * [Dashboard](#dashboard)
